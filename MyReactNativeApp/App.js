@@ -1,29 +1,67 @@
+// import * as Device from "expo-device";
+
 import { StatusBar } from "expo-status-bar";
+
 import {
-  StyleSheet,
+  Platform,
   Text,
   View,
   SafeAreaView,
-  Button,
   Alert,
   Image,
   TouchableWithoutFeedback,
+  Pressable,
 } from "react-native";
+
+import { styles } from "./styles";
+
+if (Platform.OS === "ios") {
+  // do something for ios
+} else if (Platform.OS === "android") {
+  // other thing for android
+} else if (Platform.OS === "web") {
+  // it's on web!
+} else {
+  // you probably won't end up here unless you support another platform!
+}
 
 export default function App() {
   const handleSimpleBtn = () => console.log("Simple Pressed");
-  const handleAlertBtn = () =>
-    Alert.alert("Alert Button", "Are you over on 18?", [
-      { text: "Evet", onPress: () => console.log("Yes, I am.") },
-      { text: "Hayr", onPress: () => console.log("No, I am not.") },
-    ]);
-  const handlePromptBtn = () =>
-    Alert.prompt("Prompt Button", "Write anythings:", (text) =>
-      console.log("Prompt working only on IOS")
-    );
+  const handleAlertBtn = () => {
+    // web-de:
+    if (Platform.OS === "web") {
+      alert("Alert");
+    } else {
+      Alert.alert("Alert Button", "Are you over on 18?", [
+        { text: "Evet", onPress: () => console.log("Yes, I am.") },
+        { text: "Hayr", onPress: () => console.log("No, I am not.") },
+      ]);
+    }
+    console.log("Alert clicked");
+  };
+
+  const handlePromptBtn = () => {
+    if (Platform.OS === "ios") {
+      Alert.prompt("Prompt Button", "Write anythings:", (text) => {
+        console.log("Prompt working only on IOS");
+        console.log(text);
+      });
+    } else if (Platform.OS === "web") {
+      const text = prompt("Prompt Button", "Bura bir sey yazin ", "nese");
+      console.log(text);
+    }
+
+    console.log("cliced Prompt btn");
+  };
 
   const handlePressRemoteImg = () => console.log("Pressed Remote Image");
   const handlePressLocalImg = () => console.log("Pressed Local Image");
+  const handlePressInSimpleBtn = (e) => {
+    e.currentTarget.style.boxShadow = "0 0 50px 5px #000000dd";
+  };
+  const handlePressOutSimpleBtn = (e) => {
+    e.currentTarget.style.boxShadow = "0 0 20px 3px #000000dd";
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -31,18 +69,39 @@ export default function App() {
 
       <View style={styles.boxwrapper}>
         <View style={styles.boxBtns}>
-          <Button title="Simple Btn" color="green" onPress={handleSimpleBtn} />
+          <Pressable
+            onPress={handleSimpleBtn}
+            onPressIn={handlePressInSimpleBtn}
+            onPressOut={handlePressOutSimpleBtn}
+            style={[styles.btn, styles.btnSuccess]}
+          >
+            <Text style={styles.btnTxtStyle}>Simple Btn</Text>
+          </Pressable>
         </View>
         <View style={styles.boxBtns}>
-          <Button title="Alert Btn" onPress={handleAlertBtn} />
+          <Pressable
+            onPress={handleAlertBtn}
+            onPressIn={handlePressInSimpleBtn}
+            onPressOut={handlePressOutSimpleBtn}
+            style={[styles.btn, styles.btnPrimary]}
+          >
+            <Text style={styles.btnTxtStyle}>Alert Btn</Text>
+          </Pressable>
         </View>
         <View style={styles.boxBtns}>
-          <Button title="Promp Btn" color="red" onPress={handlePromptBtn} />
+          <Pressable
+            onPress={handlePromptBtn}
+            onPressIn={handlePressInSimpleBtn}
+            onPressOut={handlePressOutSimpleBtn}
+            style={[styles.btn, styles.btnDanger]}
+          >
+            <Text style={styles.btnTxtStyle}>Prompt Btn</Text>
+          </Pressable>
         </View>
       </View>
       <View style={styles.imgBoxs}>
-        <View style={styles.imgBox}>
-          <TouchableWithoutFeedback onPress={handlePressRemoteImg}>
+        <TouchableWithoutFeedback onPress={handlePressRemoteImg}>
+          <View style={[styles.imgBox, styles.imgBGC]}>
             <Image
               style={styles.img}
               source={{
@@ -51,8 +110,8 @@ export default function App() {
                 uri: "https://picsum.photos/200/320",
               }}
             />
-          </TouchableWithoutFeedback>
-        </View>
+          </View>
+        </TouchableWithoutFeedback>
         <View style={styles.imgBox}>
           <TouchableWithoutFeedback onPress={handlePressLocalImg}>
             <Image
@@ -66,56 +125,3 @@ export default function App() {
     </SafeAreaView>
   );
 }
-
-const stil = {
-  borderColor: "",
-};
-
-const styles = StyleSheet.create({
-  container: {
-    padding: 10,
-    paddingTop: 50,
-    paddingBottom: 20,
-    width: "100%",
-    height: "100%",
-  },
-  title: {
-    textAlign: "center",
-    fontSize: 20,
-    color: "#41da4b",
-    fontWeight: 600,
-    borderColor: "#41da4b",
-    borderLeftWidth: 10,
-    borderRightWidth: 10,
-    marginBottom: 15,
-  },
-  boxwrapper: {
-    padding: 10,
-    display: "flex",
-    alignItems: "center",
-    borderColor: "#41da4b",
-    borderLeftWidth: 10,
-    borderRightWidth: 10,
-  },
-  boxBtns: {
-    width: 200,
-    marginBottom: 5,
-  },
-  img: {
-    maxWidth: "100%",
-    height: "100%",
-    borderColor: "#41da4b",
-    borderWidth: 2,
-    borderRadius: 8,
-  },
-  imgBoxs: {
-    marginTop: 10,
-    display: "flex",
-    flexDirection: "row",
-  },
-  imgBox: {
-    width: "50%",
-    height: 320,
-    padding: 5,
-  },
-});
